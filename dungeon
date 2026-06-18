@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+
+<?php
+
+define('CREATING', in_array('--create-room', $argv));
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Models\Room;
+use Models\Player;
+use Utils\Terminal;
+use Controllers\DungeonController;
+
+Terminal::enableRawMode();
+Terminal::clear();
+
+$room = new Room(1);
+$player = new Player();
+$room->placePlayer($player);
+
+DungeonController::start($room, $player);

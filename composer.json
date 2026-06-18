@@ -1,0 +1,10 @@
+{
+    "name": "makkinga/terminal-quest",
+    "autoload": {
+        "psr-4": {
+            "Models\\": "Models/",
+            "Controllers\\": "Controllers/",
+            "Utils\\": "Utils/"
+        }
+    }
+}
