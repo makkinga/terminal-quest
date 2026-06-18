@@ -6,6 +6,7 @@
 //   coins     - [[x, y], ...]
 //   walls     - [[x, y], ...]  extra internal wall tiles
 //   obstacles - [['x'=>, 'y'=>, 'damage'=>, 'glyph'=>, 'color=>'], ...]
+//   monsters  - [['x'=>, 'y'=>, 'damage'=>, 'glyph'=>, 'color=>'], ...]
 //   enter     - ['x' =>, 'y' =>] or null (start room)
 //   exit      - ['x' =>, 'y' =>, 'to' => <room id>]  or null (final room)
 //   start     - [x, y]
@@ -37,6 +38,10 @@ return [
 
             ['from' => [1, 9], 'to' => [3, 16],  'damage' => 1, 'glyph' => '~', 'color' => 'red'],
             ['from' => [10, 1], 'to' => [15, 10],  'damage' => 1, 'glyph' => '~', 'color' => 'red'],
+        ],
+        'monsters' => [
+            ['x' => 8, 'y' => 8, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
+            ['x' => 29, 'y' => 9, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
         ],
         'enter'    => null,
         'exit'     => ['x' => 33, 'y' => 9, 'to' => 2],

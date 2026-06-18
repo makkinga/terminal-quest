@@ -70,14 +70,7 @@ class DungeonController
             return;
         }
 
-        $obstacle = self::$room->obstacleAt($newX, $newY);
-        if ($obstacle !== null) {
-            self::$player->takeDamage($obstacle->damage);
-            self::$player->wasHit = true;
-        } elseif (self::$room->isFloor($newX, $newY)) {
-            self::$player->x = $newX;
-            self::$player->y = $newY;
-        }
+        self::handleInteraction($newX, $newY);
     }
 
     private static function handleDeadInput(): void
@@ -92,6 +85,30 @@ class DungeonController
             case 'n':
                 Terminal::quit();
                 break;
+        }
+    }
+
+    private static function handleInteraction(int $x, int $y): void
+    {
+        $obstacle = self::$room->obstacleAt($x, $y);
+        if ($obstacle !== null) {
+            self::$player->takeDamage($obstacle->damage);
+            self::$player->wasHit = true;
+            return;
+        }
+
+        $monster = self::$room->monsterAt($x, $y);
+        if ($monster !== null) {
+            self::$player->takeDamage($monster->damage);
+            self::$player->wasHit = true;
+            $monster->takeDamage(1);
+            self::$room->pruneMonsters();
+            return;
+        }
+
+        if (self::$room->isFloor($x, $y)) {
+            self::$player->x = $x;
+            self::$player->y = $y;
         }
     }
 }

@@ -5,6 +5,7 @@ namespace Models;
 use Utils\Color;
 use Utils\Config;
 use Utils\Terminal;
+use Models\Monster;
 use Models\Obstacle;
 
 class Room
@@ -15,8 +16,9 @@ class Room
     public int $id;
     public array $blueprint;
     public array $grid;
-    public array $coins;
-    public array $obstacles;
+    public array $coins = [];
+    public array $obstacles = [];
+    public array $monsters = [];
     public ?array $enterPos;
     public ?array $exitPos;
     public ?array $startPos;
@@ -83,11 +85,28 @@ class Room
 
     public function obstacleAt(int $x, int $y): ?Obstacle
     {
-        foreach ($this->obstacles as $m) {
-            if ($m->x === $x && $m->y === $y) return $m;
+        foreach ($this->obstacles as $obstacle) {
+            if ($obstacle->x === $x && $obstacle->y === $y) return $obstacle;
         }
 
         return null;
+    }
+
+    public function monsterAt(int $x, int $y): ?Monster
+    {
+        foreach ($this->monsters as $monster) {
+            if ($monster->x === $x && $monster->y === $y) return $monster;
+        }
+
+        return null;
+    }
+
+    public function pruneMonsters(): void
+    {
+        $this->monsters = array_values(array_filter(
+            $this->monsters,
+            fn(Monster $monster) => $monster->isAlive()
+        ));
     }
 
     private function load(): void
@@ -101,6 +120,7 @@ class Room
         $this->placeExit();
         $this->placeCoins();
         $this->placeObstacles();
+        $this->placeMonsters();
         $this->placeStart();
     }
 
@@ -128,7 +148,8 @@ class Room
         $roomWidth = self::GRID_WIDTH;
         $roomHeight = self::GRID_HEIGHT;
         $statusLines = $this->getStatusLines($player);
-        $obstaclesByPosition = $this->getObstaclesByPosition();
+        $obstaclesByPosition = $this->getIndexedByPosition($this->obstacles);
+        $monstersByPosition = $this->getIndexedByPosition($this->monsters);
 
         foreach ($this->grid as $y => $row) {
             $line = $padding;
@@ -142,6 +163,7 @@ class Room
                     cell: $cell,
                     player: $player,
                     obstaclesByPosition: $obstaclesByPosition,
+                    monstersByPosition: $monstersByPosition,
                     roomWidth: $roomWidth,
                     roomHeight: $roomHeight
                 );
@@ -151,30 +173,36 @@ class Room
         }
     }
 
-    private function renderCell(int $x, int $y, int $cell, Player $player, array $obstaclesByPosition, int $roomWidth, int $roomHeight): string
+    private function renderCell(int $x, int $y, int $cell, Player $player, array $obstaclesByPosition, array $monstersByPosition, int $roomWidth, int $roomHeight): string
     {
         $key = "$y,$x";
 
         if ($x === $player->x && $y === $player->y) {
-            return Color::wrap('b', $player->wasHit ? 'red' : 'blue');
+            return Color::wrap('b', $player->wasHit ? 'red' : 'blue') . ' ';
         }
 
         if (isset($obstaclesByPosition[$key])) {
             $obstacle = $obstaclesByPosition[$key];
 
-            return Color::wrap($obstacle->glyph, $obstacle->color);
+            return Color::wrap($obstacle->glyph, $obstacle->color) . ' ';
+        }
+
+        if (isset($monstersByPosition[$key])) {
+            $monster = $monstersByPosition[$key];
+
+            return Color::wrap($monster->glyph, $monster->color) . ' ';
         }
 
         if ($this->exitPos !== null && $x === $this->exitPos['x'] && $y === $this->exitPos['y']) {
-            return Color::wrap('>', 'green');
+            return Color::wrap('>', 'green') . ' ';
         }
 
         if ($this->enterPos !== null && $x === $this->enterPos['x'] && $y === $this->enterPos['y']) {
-            return Color::wrap('<', 'gray');
+            return Color::wrap('<', 'gray') . ' ';
         }
 
         if (isset($this->coins[$key])) {
-            return Color::wrap('●', 'yellow');
+            return Color::wrap('●', 'yellow') . ' ';
         }
 
         if ($cell === 1) {
@@ -200,12 +228,12 @@ class Room
         return $x === 0 || $x === $roomWidth - 1 ? '║' : '#';
     }
 
-    private function getObstaclesByPosition(): array
+    private function getIndexedByPosition(array $objects): array
     {
         $indexed = [];
 
-        foreach ($this->obstacles as $obstacle) {
-            $indexed["{$obstacle->y},{$obstacle->x}"] = $obstacle;
+        foreach ($objects as $object) {
+            $indexed["{$object->y},{$object->x}"] = $object;
         }
 
         return $indexed;
@@ -258,7 +286,6 @@ class Room
 
     private function placeCoins(): void
     {
-        $this->coins = [];
         foreach ($this->expandPositions($this->blueprint['coins'] ?? []) as [$x, $y]) {
             $this->coins["$y,$x"] = true;
         }
@@ -266,14 +293,27 @@ class Room
 
     private function placeObstacles(): void
     {
-        $this->obstacles = [];
-        foreach ($this->expandPositions($this->blueprint['obstacles'] ?? []) as $m) {
+        foreach ($this->expandPositions($this->blueprint['obstacles'] ?? []) as $obstacle) {
             $this->obstacles[] = new Obstacle(
-                x: $m['x'],
-                y: $m['y'],
-                damage: $m['damage'] ?? 2,
-                glyph: $m['glyph'] ?? '~',
-                color: $m['color'] ?? 'red'
+                x: $obstacle['x'],
+                y: $obstacle['y'],
+                damage: $obstacle['damage'],
+                glyph: $obstacle['glyph'],
+                color: $obstacle['color']
+            );
+        }
+    }
+
+    private function placeMonsters(): void
+    {
+        foreach ($this->blueprint['monsters'] ?? [] as $monster) {
+            $this->monsters[] = new Monster(
+                x: $monster['x'],
+                y: $monster['y'],
+                hp: $monster['hp'],
+                damage: $monster['damage'],
+                glyph: $monster['glyph'],
+                color: $monster['color']
             );
         }
     }
