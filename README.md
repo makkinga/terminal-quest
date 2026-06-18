@@ -38,7 +38,7 @@ cd terminal-quest
 
 ## Goal
 
-The goal of the game is to navigate the player `b` trough the tree dungeon rooms using the `hjkl` keys and collect as many coins as possible without dying.
+The goal of the game is to navigate the player `b` trough the three dungeon rooms using the `hjkl` keys and collect as many coins as possible without dying.
 
 ## Obstacles
 
