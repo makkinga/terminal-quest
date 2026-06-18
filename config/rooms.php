@@ -40,7 +40,6 @@ return [
             ['from' => [10, 1], 'to' => [15, 10],  'damage' => 1, 'glyph' => '~', 'color' => 'red'],
         ],
         'monsters' => [
-            ['x' => 8, 'y' => 8, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
             ['x' => 29, 'y' => 9, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
         ],
         'enter'    => null,
@@ -120,6 +119,12 @@ return [
             ['from' => [25, 13], 'to' => [25, 16], 'damage' => 1, 'glyph' => '*', 'color' => 'green'],
             ['from' => [14, 15], 'to' => [21, 15], 'damage' => 1, 'glyph' => '*', 'color' => 'green'],
             ['from' => [13, 15], 'to' => [13, 16], 'damage' => 1, 'glyph' => '‡', 'color' => 'green'],
+        ],
+        'monsters' => [
+            ['x' => 7, 'y' => 3, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
+            ['x' => 7, 'y' => 4, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
+            ['x' => 32, 'y' => 9, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
+            ['x' => 15, 'y' => 8, 'hp' => 2, 'damage' => 1, 'glyph' => 'Ж', 'color' => 'magenta'],
         ],
         'enter'    => ['x' => 0, 'y' => 1],
         'exit'     => ['x' => 30, 'y' => 17, 'to' => 3],
