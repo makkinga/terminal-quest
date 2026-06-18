@@ -43,3 +43,7 @@ The goal of the game is to navigate the player `b` trough the dungeon rooms usin
 ## Obstacles
 
 There are 3 types of obstacles in the game: Lava `~`, Spiky bushes `*`, and Spike walls `‡`. Each one will do you one heart damage.
+
+## Monsters
+
+There is only one type of monster `Ж`. It has an 2HP and can be killed by hitting it twice.
