@@ -46,4 +46,4 @@ There are 3 types of obstacles in the game: Lava `~`, Spiky bushes `*`, and Spik
 
 ## Monsters
 
-There is only one type of monster `Ж`. It has an 2HP and can be killed by hitting it twice.
+There is only one type of monster `Ж`. It has 2HP and can be killed by hitting it twice.
